@@ -1,5 +1,5 @@
 /* El lenguaje de programacion C, R&K, (Prentice Hall, 2da. edicion, 1991) */
-/* # 4.11 */
+/* # 4.12 */
 
 /* El siguiente programa muestra el ejemplo de la funcion itoaRecursivo la cual comvierte un numero entero a una cadena de caracteres de manera recursiva */
 #include <stdio.h>
