@@ -1,10 +1,38 @@
 /* El lenguaje de programacion C, R&K, (Prentice Hall, 2da. edicion, 1991) */
-/* # 8.8 */
-																				 
- /* Escriba una rutina bfree(p,n) que libere un bloque arbitrario
-p de n caracteres, en la lista libre mantenida por malloc y free. Utilizando
-bfree, un usuario puede agregar un arreglo estatico o externo a la lista libre 
-en cualquier momento.
+/* # 8.6 */
+																									 
+ /* La funcion de libreria estandar calloc(n,size) regresa un apuntador a
+n objetos de tamaño size, con el amacenamiento inicializado a cero. Escribir
+calloc llamando a malloc o modificando esta funcion.
+
+R: implementamos callocc1 modificando mallocc, callocc2 usando mallocc
+
+El prototipo de esta funcion:
+
+void *calloc(size_t nelements, size_t elementSize);
+
+la cual reserva una region de memoria, inicializada a 0, de tamaño nelements × elementSize. 
+
+En el ejercicio 5.7 revisamos un  asignador de memoria basado en arreglos:
+
+#define ALLOCSIZE 10000
+static char allocbuf[ALLOCSIZE];
+static char *allocp = allocbuf;
+
+char *alloc(int n) /* Regresa un apuntador a n caracteres 
+   {
+     if (allocbuf + ALLOCSIZE - allocp >= n){
+       allocp += n;
+       return allocp - n;
+     }else
+       return 0;
+   }
+
+ void afree(char *p) /* Almacenamiento libre apuntado por p
+ {
+   if (p >= allocbuf && p < allocbuf + ALLOCSIZE)
+     allocp = p;
+ }
 
 */
 
@@ -19,10 +47,10 @@ para los espacios vacios*/
 
 /* POSIX es una norma escrita por la IEEE, que define una interfaz estándar del sistema operativo y el entorno, incluyendo un intérprete de comandos.​ */
  
-/* revisar : https://github.com/andrewsuzuki/kr-solutions/blob/master/ch8/8-08/bfree.c */						
+					
 #include<stdio.h>
 #include<string.h>										
-#include<unistd.h> //para sbrk()
+#include <unistd.h> //para sbrk()
 
 typedef long Align; //para alineamiento al limite mayor
 
@@ -69,68 +97,6 @@ else p->s.ptr = bp;
  freep = p; //ahora camria el apuntador freep al espacio vacio
 }
 
-/*bfree: coloca el bloque de memoria apuntado por *ap como libre
- n indica el numero de bloques alos que apunta ap; version modificando freee */
-void bfreee1(void *ap, int n)
-{
-Header *bp,*p;
- bp = (Header *)ap - 1; //le quitamos el + 1 del encabezado, nos posicionamos al inicio del encabezado
-unsigned nu = n / sizeof(Header); //tamaño de bloque, sizeof(Header)= #bytes, 
-	if (nu <= 1){ //el tamaño de header excede el numero de bloques a liberar
-	fprintf(stderr,"el tamaño de header excede el numero de bloques a liberar\n");
-	printf("el tamaño de header excede el numero de bloques a liberar\n");
-	return;
-	}
-
-if (freep == NULL) { //Si el apuntador al espacio libre es nullo.
-        base.s.ptr = freep = &base;
-        base.s.size = 0;
-	}
-bp->s.size = nu; //cambias el tamño del apuntador que vas a modificar.
-
- //la condicion de for: p no esta antes de bp o p->s.ptr no esta despues de bp, si (bp<=p || bp>=p->s.ptr)= !(p < bp < p->s.ptr)
- // en palabras: NO bp, como dir. mem., bp E [p,p->s.str] 
- //Caso 1: se comparan direccioines de memoria reservadas en el HEAP (como revisa su tamaño?)
-for(p=freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr) //p se usa para recorrer iniciando en el apuntador a la lista de bloques vacios
-	if(p >= p->s.ptr && (bp > p||bp<p->s.ptr)) // (p->s.ptr<= p < bp) || (bp < p->s.ptr <= p)
-	break; //si p E [p->s.ptr,bp) o p->s.ptr E (bp,p]
-//OBS:El for no tiene llaves: se sale si for no cumple la condicion y bp E [p,p->s.str] 
-//o se cumple el if y rompe el ciclo for con break: p E [p->s.ptr,bp) o p->s.ptr E (bp,p]
-//Caso 2:
-if(bp + bp->s.size == p->s.ptr){ //se junta al nbr superior
-  bp->s.size += p->s.ptr->s.size;//aumentas libre, con el tamaño del apuntador bp mas 
-  bp->s.ptr = p->s.ptr->s.ptr;//enlazas ocupando ya el espacio
-	}
-else bp->s.ptr = p->s.ptr; //no cabe en el blq delantero y aumentas el apuntador
-if(p+p->s.size == bp){ //se junta al nbf inferior, si llegas a bp aumentandole a p su tamaño.
-  p->s.size += bp->s.size; //incrementa el tamaño de free para alcanzar a bp.
-  p->s.ptr = bp->s.ptr;//enlaza los apuntadores-
-	}
-else p->s.ptr = bp;
- freep = p; //ahora cambia el apuntador freep al espacio vacio modificado
-}
-
-/*bfree2: coloca el bloque de memoria apuntado por *ap como libre
- n indica el numero de bloques alos que apunta ap, version usanado free*/
-void bfreee2(void *ap, int n)
-{
-Header *bp,*p;
- bp = (Header *)ap - 1; //le quitamos el + 1 del encabezado, nos posicionamos al inicio del encabezado
-unsigned nu = n / sizeof(Header); //tamaño de bloque, sizeof(Header)= #bytes, 
-	if (nu <= 1){ //el tamaño de header excede el numero de bloques a liberar
-	  fprintf(stderr,"%s","el tamaño de header excede el numero de bloques a liberar\n");
-	printf("el tamaño de header excede el numero de bloques a liberar\n");
-	return;
-	}
-
-if (freep == NULL) { //Si el apuntador al espacio libre es nullo.
-        base.s.ptr = freep = &base;
-        base.s.size = 0;
-	}
-bp->s.size = nu; //cambias el tamño del apuntador que vas a modificar.
-
- freee((void *)(bp + 1)); 
-}
 
 /* morecore:  le solicita al sistema mas memoria */
 static Header *morecore(unsigned nu)
@@ -237,11 +203,10 @@ struct rec
     		char A;
 	};
 int *x;
-struct rec *y;
+ struct rec *y;
  
 x = (int*)mallocc(sizeof(int)*10);
 y = (struct rec *)callocc1(3,sizeof(struct rec));
-
  
  if (x == NULL || y == NULL) {
   fprintf(stderr, "malloc fallo\n");
@@ -265,11 +230,4 @@ x[2]=2;
  printf("y[%i]->PI = %f\n",i,y[i].PI);
  printf("y[%i]->A = %i\n",i,y[i].A);
 }
- int V[10];
- for(int i=0;i<10;V[i++]=i)
-   printf("V[%d]=%i\n",i,V[i]);
-     
- bfreee1(V,10);
- printf("V[%d]=%i\n",0,V[0]);
-
 }
