@@ -1,0 +1,71 @@
+/* El siguiente programa agrega mas funcionalidades a la version miniprintf (version simple de printf)
+introducida en el libro */
+
+/* Tales como:
+(1) Impresion de caracteres octales y hexadecimales banderas o/h, apuntadores void *
+(2) Notacion cientifica banderas E/e 
+(3) maximo numero de caracteres por cadena printf("%.*s",max,s) 
+(4) presicion -10.14 para cadenas y para enteros y reales*/
+/* Numero de programa (El lenguaje de programacion C, R&K, segunda edicion): 7-2 */ 
+/* Felipe Gayosso Martinez */
+
+#include <stdio.h>
+#include <string.h>
+#include <stdarg.h> //Contiene macrodefiniciones que definen como avanzar en una lista de argumentos
+
+void miniprintf(char *fmt, ...) //los tres puntos indican que puede haber varios campos
+{
+va_list ap; //apunta a cada argumento sin nombre y en orden
+char *p, *sval;
+int ival;
+double dval;
+void *vval;
+ char numchar[20];
+ int num;
+ 
+va_start(ap,fmt); //hace que ap apunte al primer argumento sin nombre
+for(p = fmt; *p; p++){
+if(*p != '%')
+{
+putchar(*p);
+continue;
+}//fin-if
+ for(int i=0;isnum(*++p);)
+   numchar[i]=*p;
+ num=atoi(numchar);
+switch(*++p){
+case 'd':ival = va_arg(ap, int);printf("%d",ival);break;
+case 'i':ival = va_arg(ap, int);printf("%i",ival);break;
+case 'o':ival = va_arg(ap, int);printf("%o",ival);break; //numero octal sin signo
+case 'x':ival = va_arg(ap, int);printf("%x",ival);break; //numero hex sin signo
+case 'f':dval = va_arg(ap, double);printf("%f",dval);break;
+case 'e':dval = va_arg(ap, double);printf("%e",dval);break;
+case 'p':vval = va_arg(ap, void *);printf("%p",vval);break;
+case 's':for(sval = va_arg(ap, char *);*sval;sval++) putchar(*sval);break;
+case '.':if(*++p == '*' && *++p == 's'){
+         ival = va_arg(ap,int);
+	 sval = va_arg(ap, char *);
+         printf("%.*s",ival,sval);
+	     }
+default: putchar(*p);break;
+} //fin-switch
+
+} //fin-for
+} //fin-mini
+
+main()
+{
+  int len=2;
+  int val=12413;
+  double max=2.1416;
+  char line[100]="hola";
+  char *q=line;
+  void *p=line;
+  //miniprintf("Int d: %d \t Double: %f \t Cadena: %s \n",len,max,line);
+  //miniprintf("Int i: %i \t Int oct: %o \t Int hex: %x \n",len,len,len);
+  //miniprintf("double notacion cientifica: %e \t void *: %p \t Int hex: %x \n",max,p,len);
+  miniprintf("Cadena: %.*s \n",3,q);
+  printf("%.*s \n",4,val);
+
+  return 0;
+}
