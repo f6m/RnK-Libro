@@ -1,12 +1,11 @@
+/* El lenguaje de programacion C, R&K, (Prentice Hall, 2da. edicion, 1991) */
+/* # 7.9 */
 
 
 /* Se puede escribir funciones como isupper/islower para ahorrar
 ESPACIO O TIEMPO. Explore ambas posibilidades
 
 /* Un conjunto de archivos tomados con los parametros argc/argv e imprime cada uno por pantallas */
-/* Numero de programa (El lenguaje de programacion C, R&K, segunda edicion): 7.9 */ 
-/* Felipe Gayosso Martinez */
-
 
 /* Funcion getline que obtiene un linea la almacena en s y tiene longitud maxima lim */
 #include <stdio.h>
