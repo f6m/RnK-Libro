@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
-- family-names: "Gayosso Martínez"
-  given-names: "Felipe"
+- family-names: "f6m"
+  given-names: ""
   orcid: "https://orcid.org/0000-0002-5693-4844"
 title: "A solution set to the classic R&K C book"
 version: 1.0.1
