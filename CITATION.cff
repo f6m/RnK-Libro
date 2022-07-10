@@ -4,8 +4,8 @@ authors:
 - family-names: "f6m"
   given-names: ""
   orcid: "https://orcid.org/0000-0002-5693-4844"
-title: "A solution set to the classic R&K C book"
+title: "My solutions to the classic R&K C book"
 version: 1.0.1
-doi: 10.5281/zenodo.
+doi:
 date-released: 2019-04-04
 url: "https://github.com/f6m/RnK-Libro"
