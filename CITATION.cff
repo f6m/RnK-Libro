@@ -4,7 +4,8 @@ authors:
 - family-names: "f6m"
   given-names:
   orcid: "https://orcid.org/0000-0002-5693-4844"
-title: "My solutions to the classic R&K C book"
+title: "My solutions to the proposed activities of the classic book 'The C Programming Language by Brian W. Kerniham and
+Denis M. Ritchie (Github Repositorie)"
 version: 1.0.1
 doi:
 date-released: 2019-04-04
